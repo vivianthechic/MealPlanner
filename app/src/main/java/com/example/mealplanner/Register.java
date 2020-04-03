@@ -33,8 +33,8 @@ public class Register extends AppCompatActivity {
         mFullName = findViewById(R.id.fullname_plaintext);
         mEmail = findViewById(R.id.email_plaintext);
         mPassword = findViewById(R.id.password_plaintext);
-        mRegisterBtn = findViewById(R.id.register_button);
-        mLoginBtn = findViewById(R.id.already_textview);
+        mRegisterBtn = findViewById(R.id.login_button);
+        mLoginBtn = findViewById(R.id.create_textview);
         progressBar = findViewById(R.id.register_progressbar);
         fAuth = FirebaseAuth.getInstance();
 
@@ -74,6 +74,13 @@ public class Register extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),Login.class));
             }
         });
     }
