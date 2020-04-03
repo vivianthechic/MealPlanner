@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "354365814277",
+    "firebase_url": "https://mealplanner-1b30f.firebaseio.com",
+    "project_id": "mealplanner-1b30f",
+    "storage_bucket": "mealplanner-1b30f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354365814277:android:c1d6147478e6d568154e6c",
+        "android_client_info": {
+          "package_name": "com.example.mealplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354365814277-2c18ek3sfc3f2fff9ep6o0280thb4jqn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mealplanner",
+            "certificate_hash": "4961352aea1858903879380f4a8f170167584f6b"
+          }
+        },
+        {
+          "client_id": "354365814277-ks1hj1mdhf8aa9i41jj6dlimqp6f2i1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWM9OkXEHd8gcUAf5g8hst8tf2hCT_Ms0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354365814277-ks1hj1mdhf8aa9i41jj6dlimqp6f2i1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
