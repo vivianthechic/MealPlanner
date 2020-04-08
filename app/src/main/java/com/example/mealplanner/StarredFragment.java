@@ -15,6 +15,7 @@ public class StarredFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_inventory,container,false);
+        getActivity().setTitle("Starred Recipes");
         return v;
     }
 }
