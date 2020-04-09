@@ -33,8 +33,8 @@ public class SettingsFragment extends Fragment {
         documentReference.addSnapshotListener(getActivity() , new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                signedInAs.setText("You are currently signed in as "+documentSnapshot.getString("fullName"));
-                email_settings.setText("Email: "+documentSnapshot.getString("email"));
+                signedInAs.setText(documentSnapshot.getString("fullName"));
+                email_settings.setText(documentSnapshot.getString("email"));
             }
         });
         return v;

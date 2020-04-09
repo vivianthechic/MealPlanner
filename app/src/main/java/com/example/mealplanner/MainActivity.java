@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     Toolbar toolbar;
     FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +41,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
 
-        // load default fragment
+        char frag = getIntent().getCharExtra("frag",'0');
         fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.container_fragment,new HomeFragment());
-        fragmentTransaction.commit();
+        switch(frag){
+            case '1':
+                fragmentManager.beginTransaction().add(R.id.container_fragment,new SearchFragment()).commit();
+                break;
+            case '2':
+                fragmentManager.beginTransaction().add(R.id.container_fragment,new StarredFragment()).commit();
+                break;
+            case '3':
+                fragmentManager.beginTransaction().add(R.id.container_fragment,new InventoryFragment()).commit();
+                break;
+            case '4':
+                fragmentManager.beginTransaction().add(R.id.container_fragment,new SettingsFragment()).commit();
+                break;
+            default:
+                fragmentManager.beginTransaction().add(R.id.container_fragment,new HomeFragment()).commit();
+        }
     }
 
     public void logout(View v){
@@ -58,36 +70,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
-        if(item.getItemId() == R.id.home){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new HomeFragment());
-            fragmentTransaction.commit();
-        }
-        else if(item.getItemId() == R.id.search){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new SearchFragment());
-            fragmentTransaction.commit();
-        }
-        else if(item.getItemId() == R.id.starred){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new StarredFragment());
-            fragmentTransaction.commit();
-        }
-        else if(item.getItemId() == R.id.inventory){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new InventoryFragment());
-            fragmentTransaction.commit();
-        }
-        else if(item.getItemId() == R.id.settings){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new SettingsFragment());
-            fragmentTransaction.commit();
+        fragmentManager = getSupportFragmentManager();
+        switch(item.getItemId()){
+            case R.id.search:
+                fragmentManager.beginTransaction().replace(R.id.container_fragment,new SearchFragment()).commit();
+                break;
+            case R.id.starred:
+                fragmentManager.beginTransaction().replace(R.id.container_fragment,new StarredFragment()).commit();
+                break;
+            case R.id.inventory:
+                fragmentManager.beginTransaction().replace(R.id.container_fragment,new InventoryFragment()).commit();
+                break;
+            case R.id.settings:
+                fragmentManager.beginTransaction().replace(R.id.container_fragment,new SettingsFragment()).commit();
+                break;
+            default:
+                fragmentManager.beginTransaction().replace(R.id.container_fragment,new HomeFragment()).commit();
         }
         return true;
+    }
+
+    public void changePassword(View v){
+        startActivity(new Intent(getApplicationContext(),ChangePassword.class));
+    }
+
+    public void deactivate(View v){
+
     }
 }
