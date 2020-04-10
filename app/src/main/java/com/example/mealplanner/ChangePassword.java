@@ -74,8 +74,8 @@ public class ChangePassword extends AppCompatActivity {
                                         if(task.isSuccessful()){
                                             Toast.makeText(ChangePassword.this,"Password has been changed.", Toast.LENGTH_SHORT).show();
                                             fAuth.signOut();
-                                            startActivity(new Intent(getApplicationContext(),Login.class));
                                             finish();
+                                            startActivity(new Intent(getApplicationContext(),Login.class));
                                         }else{
                                             Toast.makeText(ChangePassword.this,"Error: "+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                                             progressBar.setVisibility(View.INVISIBLE);

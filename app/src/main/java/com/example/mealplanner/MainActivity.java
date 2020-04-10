@@ -7,15 +7,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -63,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void logout(View v){
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(getApplicationContext(),Login.class));
         finish();
+        startActivity(new Intent(getApplicationContext(),Login.class));
     }
 
     @Override
@@ -95,6 +103,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void deactivate(View v){
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle("Are you sure you want to deactivate your account?");
+        builder.setMessage("Deactivating your account will delete all of your data.");
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user != null){
+                    FirebaseFirestore.getInstance().collection("users").document(user.getUid()).delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("TAG", "onSuccess: user profile deleted for "+user.getUid());
+                        }
+                    });
+                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(getApplicationContext(),"Account deactivated.",Toast.LENGTH_SHORT).show();
+                                finish();
+                                startActivity(new Intent(getApplicationContext(),Login.class));
+                            }else{
+                                Toast.makeText(getApplicationContext(),"Account could not be deactivated.",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        builder.show();
     }
 }
