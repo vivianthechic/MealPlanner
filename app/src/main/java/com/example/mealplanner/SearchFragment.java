@@ -133,7 +133,7 @@ public class SearchFragment extends Fragment {
             try {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?number=10&offset=0&query="+searchQuery)
+                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?number=20&offset=0&query="+searchQuery)
                         .get()
                         .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
                         .addHeader("x-rapidapi-key", "9a61e45873mshe1327d3335539b4p164aa2jsn65b46c3bc77e")
@@ -170,7 +170,7 @@ public class SearchFragment extends Fragment {
             try {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=5")
+                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=10")
                         .get()
                         .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
                         .addHeader("x-rapidapi-key", "9a61e45873mshe1327d3335539b4p164aa2jsn65b46c3bc77e")

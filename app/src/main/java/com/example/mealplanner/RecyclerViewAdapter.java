@@ -2,6 +2,8 @@ package com.example.mealplanner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyHolder> {
 
@@ -22,6 +31,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter(Context context, List<Recipe> list){
         this.mContext = context;
         this.mData = list;
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] arr=baos.toByteArray();
+        String result= Base64.encodeToString(arr, Base64.DEFAULT);
+        return result;
     }
 
     @NonNull
@@ -39,6 +56,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                DocumentReference documentReference = FirebaseFirestore.getInstance()
+                        .collection("recipes").document(String.valueOf(mData.get(position).getRecipeId()));
+                Map<String,Object> r = new HashMap<>();
+                r.put("title",mData.get(position).getRecipeName());
+                r.put("ingredients",mData.get(position).getRecipeIngredients());
+                r.put("instructions",mData.get(position).getRecipeInstructions());
+                r.put("image",BitMapToString(mData.get(position).getRecipeImage()));
+                documentReference.set(r).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                });
+
                 Intent i = new Intent(mContext,RecipeActivity.class);
                 i.putExtra("recipeName",mData.get(position).getRecipeName());
                 i.putExtra("ingredients",mData.get(position).getRecipeIngredients());
