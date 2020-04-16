@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -33,20 +36,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.mData = list;
     }
 
-    public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] arr=baos.toByteArray();
-        String result= Base64.encodeToString(arr, Base64.DEFAULT);
-        return result;
-    }
-
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         View view = layoutInflater.inflate(R.layout.cardview_recipe,parent,false);
         return new MyHolder(view);
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] arr=baos.toByteArray();
+        String result= Base64.encodeToString(arr, Base64.DEFAULT);
+        return result;
     }
 
     @Override
@@ -57,21 +60,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
 
-                DocumentReference documentReference = FirebaseFirestore.getInstance()
-                        .collection("recipes").document(String.valueOf(mData.get(position).getRecipeId()));
-                Map<String,Object> r = new HashMap<>();
-                r.put("title",mData.get(position).getRecipeName());
-                r.put("ingredients",mData.get(position).getRecipeIngredients());
-                r.put("instructions",mData.get(position).getRecipeInstructions());
-                r.put("image",BitMapToString(mData.get(position).getRecipeImage()));
-                documentReference.set(r).addOnSuccessListener(new OnSuccessListener<Void>() {
+                FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+                final DocumentReference recipeDoc = fStore.collection("recipes").document(String.valueOf(mData.get(position).getRecipeId()));
+                recipeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-
+                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if(!documentSnapshot.exists()){
+                            Map<String,Object> r = new HashMap<>();
+                            r.put("title",mData.get(position).getRecipeName());
+                            r.put("ingredients",mData.get(position).getRecipeIngredients());
+                            r.put("instructions",mData.get(position).getRecipeInstructions());
+                            r.put("image",BitMapToString(mData.get(position).getRecipeImage()));
+                            recipeDoc.set(r).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                }
+                            });
+                        }
                     }
                 });
 
                 Intent i = new Intent(mContext,RecipeActivity.class);
+                i.putExtra("recipeId",String.valueOf(mData.get(position).getRecipeId()));
                 i.putExtra("recipeName",mData.get(position).getRecipeName());
                 i.putExtra("ingredients",mData.get(position).getRecipeIngredients());
                 i.putExtra("instructions",mData.get(position).getRecipeInstructions());
