@@ -48,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:lineSpacingExtra="3dp"
-                android:text="ingredient one\ningredient two\ningredient three" />
+                android:text="ingredient one\ningredient two\ningredient three"
+                android:textColor="@color/gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,7 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:lineSpacingExtra="3dp"
-                android:text="instruction one\ninstruction two\ninstruction three" />
+                android:text="instruction one\ninstruction two\ninstruction three"
+                android:textColor="@color/gray" />
 
         </LinearLayout>
 

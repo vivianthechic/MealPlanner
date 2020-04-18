@@ -28,6 +28,7 @@
         android:layout_marginEnd="32dp"
         android:fontFamily="sans-serif"
         android:text="Full Name"
+        android:textColor="@color/gray"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -42,6 +43,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:text="Email"
+        android:textColor="@color/gray"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -69,6 +71,7 @@
         android:layout_marginTop="16dp"
         android:text="Name"
         android:textSize="24sp"
+        android:textColor="@color/gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -79,6 +82,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="20dp"
         android:text="Email"
+        android:textColor="@color/gray"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signedInAs_textview" />
