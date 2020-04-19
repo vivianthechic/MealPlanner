@@ -1,6 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:padding="4dp"
+        android:background="@color/neutral"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/calendar_prev_button"
+            android:background="@drawable/ic_arrow_back_black_24dp"
+            android:layout_margin="10dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/currDate_textview"
+            android:gravity="center"
+            android:text="Current Date"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="3"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/calendar_next_button"
+            android:background="@drawable/ic_arrow_forward_black_24dp"
+            android:layout_margin="10dp"
+            />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Sun"
+            android:textColor="@color/black"
+            android:background="@color/p_blue"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Mon"
+            android:textColor="@color/black"
+            android:background="@color/p_green"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Tues"
+            android:textColor="@color/black"
+            android:background="@color/p_yellow"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Wed"
+            android:textColor="@color/black"
+            android:background="@color/p_orange"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Thur"
+            android:textColor="@color/black"
+            android:background="@color/p_red"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Fri"
+            android:textColor="@color/black"
+            android:background="@color/p_purple"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Sat"
+            android:textColor="@color/black"
+            android:background="@color/p_blue"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:paddingVertical="4dp"
+            />
+
+    </LinearLayout>
+    
+    <GridView
+        android:id="@+id/calendar_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="7"
+        />
+
+</LinearLayout>
