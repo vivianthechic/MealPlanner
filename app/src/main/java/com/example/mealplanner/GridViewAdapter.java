@@ -10,20 +10,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class GridViewAdapter extends ArrayAdapter {
-    List<Date> dates;
-    Calendar currentDate;
-    LayoutInflater layoutInflater;
+    private List<Date> dates;
+    private List<MealPlan> mealplan;
+    private Calendar currentDate;
+    private LayoutInflater layoutInflater;
 
-    public GridViewAdapter(@NonNull Context context, List<Date> dates,Calendar currentDate) {
+    public GridViewAdapter(@NonNull Context context, List<Date> dates,Calendar currentDate,List<MealPlan> mealplan) {
         super(context, R.layout.calendar_cell);
         this.dates = dates;
         this.currentDate = currentDate;
+        this.mealplan = mealplan;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -56,7 +60,28 @@ public class GridViewAdapter extends ArrayAdapter {
         TextView dayNumber = v.findViewById(R.id.calendar_day);
         dayNumber.setText(String.valueOf(dayNum));
 
+        TextView notEmpty = v.findViewById(R.id.calendar_dot);
+        Calendar mealsCalendar = Calendar.getInstance();
+        for(int i = 0; i < mealplan.size(); i++){
+            mealsCalendar.setTime(convertStringToDate(mealplan.get(i).getDay()));
+            if(dayNum == mealsCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == mealsCalendar.get(Calendar.MONTH)+1
+                    && displayYear == mealsCalendar.get(Calendar.YEAR)){
+                notEmpty.setText("*");
+            }
+        }
+
         return v;
+    }
+
+    private Date convertStringToDate(String mealDate){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        Date date = null;
+        try{
+            date = format.parse(mealDate);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return date;
     }
 
     @Override
