@@ -55,9 +55,9 @@ public class RecipeActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             DocumentReference documentReference = fStore.collection("users").document(user.getUid());
-            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
                     List<String> recipe_ids = Arrays.asList(documentSnapshot.getString("starred").split(","));
                     if(recipe_ids.contains(recipeId)){
                         starBtn.setText("Remove from Starred Recipes");

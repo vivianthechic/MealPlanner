@@ -100,6 +100,7 @@ public class ChangePassword extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         Intent i = new Intent(getApplicationContext(),MainActivity.class);
         i.putExtra("frag",'4');
+        finish();
         startActivityForResult(i, 0);
         return true;
     }

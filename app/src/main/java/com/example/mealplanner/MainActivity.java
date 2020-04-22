@@ -18,11 +18,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -32,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     Toolbar toolbar;
     FragmentManager fragmentManager;
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            finish();
+            startActivity(new Intent(getApplicationContext(),Login.class));
+        }else {
+            FirebaseFirestore.getInstance().collection("users").document(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    email = documentSnapshot.getString("email");
+                    password = documentSnapshot.getString("password");
+                }
+            });
+        }
 
         char frag = getIntent().getCharExtra("frag",'0');
         fragmentManager = getSupportFragmentManager();
@@ -118,28 +138,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(DialogInterface dialog, int which) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null){
-                    FirebaseFirestore.getInstance().collection("users").document(user.getUid()).delete()
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    final String uid = user.getUid();
+                    AuthCredential credential = EmailAuthProvider.getCredential(email,password);
+                    user.reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("TAG", "onSuccess: user profile deleted for "+user.getUid());
+                            FirebaseFirestore.getInstance().collection("users").document(uid).delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("TAG", "onSuccess: user profile deleted for "+uid);
+                                            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Toast.makeText(getApplicationContext(),"Account deactivated.",Toast.LENGTH_SHORT).show();
+                                                        finish();
+                                                        startActivity(new Intent(getApplicationContext(),Login.class));
+                                                    }else{
+                                                        Toast.makeText(getApplicationContext(),"Account could not be deactivated.",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
                         }
                     });
-                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(getApplicationContext(),"Account deactivated.",Toast.LENGTH_SHORT).show();
-                                finish();
-                                startActivity(new Intent(getApplicationContext(),Login.class));
-                            }else{
-                                Toast.makeText(getApplicationContext(),"Account could not be deactivated.",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                }else{
+                    finish();
+                    startActivity(new Intent(getApplicationContext(),Login.class));
                 }
             }
         });
         builder.show();
     }
 }
+

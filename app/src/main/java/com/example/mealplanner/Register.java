@@ -61,7 +61,7 @@ public class Register extends AppCompatActivity {
             public void onClick(View v) {
                 final String fullName = mFullName.getText().toString();
                 final String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
+                final String password = mPassword.getText().toString();
 
                 // validate the input data
                 if(email.isEmpty()){
@@ -88,6 +88,7 @@ public class Register extends AppCompatActivity {
                             user.put("fullName",fullName);
                             user.put("email",email);
                             user.put("starred", "");
+                            user.put("password",password);
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

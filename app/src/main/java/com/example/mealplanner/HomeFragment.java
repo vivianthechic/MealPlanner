@@ -100,13 +100,13 @@ public class HomeFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-                populateStarred();
                 selected_recipe_id = "0";
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(true);
                 final View addView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_add_meal,null);
                 Spinner spinner = addView.findViewById(R.id.recipe_spinner);
                 adapter = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,starred_names);
+                populateStarred();
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -169,28 +169,33 @@ public class HomeFragment extends Fragment {
     }
 
     private void populateStarred(){
-        starred_names = new ArrayList<>();
+        starred_names.clear();
+        starred_ids.clear();
         final FirebaseFirestore fStore = FirebaseFirestore.getInstance();
         DocumentReference userDoc = fStore.collection("users").document(user.getUid());
         userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                starred_ids = new ArrayList<>(Arrays.asList(documentSnapshot.getString("starred").split(",")));
-                for(int i = 0; i < starred_ids.size();i++){
-                    DocumentReference recipeDoc = fStore.collection("recipes").document(starred_ids.get(i));
-                    recipeDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            String name = documentSnapshot.getString("title");
-                            starred_names.add(name);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+                if(!documentSnapshot.getString("starred").equals("")){
+                    List<String> temp = new ArrayList<>(Arrays.asList(documentSnapshot.getString("starred").split(",")));
+                    for(int i = 0; i < temp.size();i++){
+                        starred_ids.add(temp.get(i));
+                        DocumentReference recipeDoc = fStore.collection("recipes").document(temp.get(i));
+                        recipeDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                String name = documentSnapshot.getString("title");
+                                starred_names.add(name);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
                 }
-                starred_names.add(0,"Please select from starred recipes");
-                starred_ids.add(0,"0");
             }
         });
+        starred_names.add(0,"Please select from starred recipes");
+        starred_ids.add(0,"0");
+        adapter.notifyDataSetChanged();
     }
 
     private void saveMealPlan(String id, String name, String day, String month, String year, String notes){

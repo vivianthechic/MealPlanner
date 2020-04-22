@@ -62,9 +62,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                 FirebaseFirestore fStore = FirebaseFirestore.getInstance();
                 final DocumentReference recipeDoc = fStore.collection("recipes").document(String.valueOf(mData.get(position).getRecipeId()));
-                recipeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                recipeDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(!documentSnapshot.exists()){
                             Map<String,Object> r = new HashMap<>();
                             r.put("title",mData.get(position).getRecipeName());

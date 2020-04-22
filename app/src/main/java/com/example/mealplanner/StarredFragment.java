@@ -54,9 +54,9 @@ public class StarredFragment extends Fragment {
 
         if(user != null){
             DocumentReference documentReference = fStore.collection("users").document(user.getUid());
-            documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
                     recipe_ids = documentSnapshot.getString("starred");
                     if(recipe_ids.isEmpty()){
                         recyclerView.setVisibility(View.INVISIBLE);

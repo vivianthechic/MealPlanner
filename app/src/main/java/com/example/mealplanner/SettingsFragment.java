@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,9 +35,9 @@ public class SettingsFragment extends Fragment {
         FirebaseUser user = fAuth.getCurrentUser();
         if(user!=null) {
             DocumentReference documentReference = fStore.collection("users").document(user.getUid());
-            documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
                     signedInAs.setText(documentSnapshot.getString("fullName"));
                     email_settings.setText(documentSnapshot.getString("email"));
                 }
