@@ -28,6 +28,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -143,25 +146,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     user.reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            FirebaseFirestore.getInstance().collection("users").document(uid).delete()
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            FirebaseFirestore.getInstance().collection("users").document(uid).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.d("TAG", "onSuccess: user profile deleted for "+uid);
-                                            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            FirebaseFirestore.getInstance().collection("mealPlans").whereEqualTo("uid",uid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        Toast.makeText(getApplicationContext(),"Account deactivated.",Toast.LENGTH_SHORT).show();
-                                                        finish();
-                                                        startActivity(new Intent(getApplicationContext(),Login.class));
-                                                    }else{
-                                                        Toast.makeText(getApplicationContext(),"Account could not be deactivated.",Toast.LENGTH_SHORT).show();
+                                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                                                    for(int i = 0; i < docs.size(); i++){
+                                                        docs.get(i).getReference().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                            }
+                                                        });
                                                     }
+                                                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if(task.isSuccessful()){
+                                                                Toast.makeText(getApplicationContext(),"Account deactivated.",Toast.LENGTH_SHORT).show();
+                                                                finish();
+                                                                startActivity(new Intent(getApplicationContext(),Login.class));
+                                                            }else{
+                                                                Toast.makeText(getApplicationContext(),"Account could not be deactivated.",Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             });
                                         }
-                                    });
+                            });
                         }
                     });
                 }else{

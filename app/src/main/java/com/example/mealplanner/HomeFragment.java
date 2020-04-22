@@ -200,7 +200,7 @@ public class HomeFragment extends Fragment {
 
     private void saveMealPlan(String id, String name, String day, String month, String year, String notes){
         final FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-        CollectionReference mealPlanCollection = fStore.collection("users").document(user.getUid()).collection("mealPlan");
+        CollectionReference mealPlanCollection = fStore.collection("mealPlans");
         Map<String,Object> data = new HashMap<>();
         data.put("day",day);
         data.put("month",month);
@@ -208,6 +208,7 @@ public class HomeFragment extends Fragment {
         data.put("notes",notes);
         data.put("recipeId",id);
         data.put("recipeName",name);
+        data.put("uid",user.getUid());
         mealPlanCollection.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -218,8 +219,8 @@ public class HomeFragment extends Fragment {
     private void collectMealsPerMonth(final String querymonth, final String queryyear){
         mealplan.clear();
         FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-        CollectionReference mealPlanCollection = fStore.collection("users").document(user.getUid()).collection("mealPlan");
-        mealPlanCollection.whereEqualTo("month",querymonth).whereEqualTo("year",queryyear).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        CollectionReference mealPlanCollection = fStore.collection("mealPlans");
+        mealPlanCollection.whereEqualTo("month",querymonth).whereEqualTo("year",queryyear).whereEqualTo("uid",user.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
