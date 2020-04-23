@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/cardview_mp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/p_orange"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DATE"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:id="@+id/mp_date"
+            android:background="@color/p_yellow"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recipe"
+            android:textSize="28sp"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:fontFamily="cursive"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/mp_recipeName"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notes"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/mp_notes"
+            />
+
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

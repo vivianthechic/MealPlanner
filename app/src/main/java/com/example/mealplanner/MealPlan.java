@@ -1,6 +1,6 @@
 package com.example.mealplanner;
 
-class MealPlan {
+class MealPlan implements Comparable<MealPlan> {
     private String recipeId;
     private String recipeName;
     private String day;
@@ -40,5 +40,10 @@ class MealPlan {
 
     public String getNotes() {
         return notes;
+    }
+
+    @Override
+    public int compareTo(MealPlan o) {
+        return this.getDay().compareTo(o.getDay());
     }
 }

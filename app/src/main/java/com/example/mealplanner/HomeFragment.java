@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +53,8 @@ public class HomeFragment extends Fragment {
     private Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
     private Context context;
 
+    private TextView noPlan;
+    private RecyclerView showMealsRecycler;
     private List<Date> dates = new ArrayList<>();
     private List<MealPlan> mealplan = new ArrayList<>();
     private List<String> starred_ids = new ArrayList<>();
@@ -57,6 +62,7 @@ public class HomeFragment extends Fragment {
     private String selected_recipe_id;
     private ArrayAdapter<String> adapter;
     private GridViewAdapter gridViewAdapter;
+    private MealRecyclerAdapter mealRecyclerAdapter;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy",Locale.ENGLISH);
     private SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM",Locale.ENGLISH);
@@ -146,6 +152,79 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String day = mealsFormat.format(dates.get(position));
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
+                View showView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_show_meals,null);
+                showMealsRecycler = showView.findViewById(R.id.mealplan_recyclerview);
+                showMealsRecycler.setLayoutManager(new LinearLayoutManager(showView.getContext()));
+                showMealsRecycler.setHasFixedSize(true);
+                List<MealPlan> dayPlan = collectMealsPerDay(day);
+                mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),dayPlan);
+                showMealsRecycler.setAdapter(mealRecyclerAdapter);
+                noPlan = showView.findViewById(R.id.noPlan_textview);
+
+                builder.setView(showView);
+                alertDialog = builder.create();
+                alertDialog.show();
+                return true;
+            }
+        });
+
+        Button showToday = v.findViewById(R.id.showToday_button);
+        Button showMonth = v.findViewById(R.id.showMonth_button);
+        Button addNew = v.findViewById(R.id.addNew_button);
+
+        showToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String day = mealsFormat.format(Calendar.getInstance(Locale.ENGLISH).getTime());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
+                View showView = LayoutInflater.from(context).inflate(R.layout.calendar_show_meals,null);
+                showMealsRecycler = showView.findViewById(R.id.mealplan_recyclerview);
+                showMealsRecycler.setLayoutManager(new LinearLayoutManager(showView.getContext()));
+                showMealsRecycler.setHasFixedSize(true);
+                List<MealPlan> dayPlan = collectMealsPerDay(day);
+                mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),dayPlan);
+                showMealsRecycler.setAdapter(mealRecyclerAdapter);
+                noPlan = showView.findViewById(R.id.noPlan_textview);
+
+                builder.setView(showView);
+                alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
+        showMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
+                View showView = LayoutInflater.from(context).inflate(R.layout.calendar_show_meals,null);
+                showMealsRecycler = showView.findViewById(R.id.mealplan_recyclerview);
+                showMealsRecycler.setLayoutManager(new LinearLayoutManager(showView.getContext()));
+                showMealsRecycler.setHasFixedSize(true);
+                mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),mealplan);
+                showMealsRecycler.setAdapter(mealRecyclerAdapter);
+                mealRecyclerAdapter.notifyDataSetChanged();
+                noPlan = showView.findViewById(R.id.noPlan_textview);
+
+                builder.setView(showView);
+                alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
+        addNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         return v;
     }
 
@@ -232,9 +311,39 @@ public class HomeFragment extends Fragment {
                     String notes = doc.getString("notes");
                     MealPlan mp = new MealPlan(id,name,day,querymonth,queryyear,notes);
                     mealplan.add(mp);
+                    Collections.sort(mealplan);
                     gridViewAdapter.notifyDataSetChanged();
                 }
             }
         });
+    }
+
+    private List<MealPlan> collectMealsPerDay(final String date){
+        final List<MealPlan> list = new ArrayList<>();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        CollectionReference mealPlanCollection = fStore.collection("mealPlans");
+        mealPlanCollection.whereEqualTo("day",date).whereEqualTo("uid",user.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                if(docs.isEmpty()){
+                    showMealsRecycler.setVisibility(View.INVISIBLE);
+                    noPlan.setVisibility(View.VISIBLE);
+                }else {
+                    for (int i = 0; i < docs.size(); i++) {
+                        DocumentSnapshot doc = docs.get(i);
+                        String id = doc.getString("recipeId");
+                        String name = doc.getString("recipeName");
+                        String month = doc.getString("month");
+                        String year = doc.getString("year");
+                        String notes = doc.getString("notes");
+                        MealPlan mp = new MealPlan(id, name, date, month, year, notes);
+                        list.add(mp);
+                        mealRecyclerAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+        return list;
     }
 }

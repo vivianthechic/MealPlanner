@@ -138,4 +138,46 @@
         android:numColumns="7"
         />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Show\nToday's\nPlan"
+            android:background="@drawable/button1"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:id="@+id/showToday_button"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Show\nMonth's\nPlan"
+            android:background="@drawable/button1"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:id="@+id/showMonth_button"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Add\na New\nPlan"
+            android:background="@drawable/button1"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:id="@+id/addNew_button"
+            />
+
+    </LinearLayout>
+
 </LinearLayout>
