@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -59,7 +60,7 @@ public class HomeFragment extends Fragment {
     private List<MealPlan> mealplan = new ArrayList<>();
     private List<String> starred_ids = new ArrayList<>();
     private List<String> starred_names = new ArrayList<>();
-    private String selected_recipe_id;
+    private String selected_recipe_id, selected_day, selected_month, selected_year;
     private ArrayAdapter<String> adapter;
     private GridViewAdapter gridViewAdapter;
     private MealRecyclerAdapter mealRecyclerAdapter;
@@ -106,55 +107,6 @@ public class HomeFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-                selected_recipe_id = "0";
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setCancelable(true);
-                final View addView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_add_meal,null);
-                Spinner spinner = addView.findViewById(R.id.recipe_spinner);
-                adapter = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,starred_names);
-                populateStarred();
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(adapter);
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selected_recipe = (String) parent.getItemAtPosition(position);
-                        selected_recipe_id = starred_ids.get(starred_names.indexOf(selected_recipe));
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-                final EditText notes_et = addView.findViewById(R.id.notes);
-                Button addMealBtn = addView.findViewById(R.id.add_meal_button);
-                final String day = mealsFormat.format(dates.get(position));
-                final String month = monthFormat.format(dates.get(position));
-                final String year = yearFormat.format(dates.get(position));
-                addMealBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(selected_recipe_id.equals("0")){
-                            Toast.makeText(context,"Please select a recipe",Toast.LENGTH_SHORT).show();
-                        }else{
-                            String notes = notes_et.getText().toString();
-                            saveMealPlan(selected_recipe_id,starred_names.get(starred_ids.indexOf(selected_recipe_id)),day,month,year,notes);
-                            setUpCalendar();
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-
-                builder.setView(addView);
-                alertDialog = builder.create();
-                alertDialog.show();
-            }
-        });
-
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String day = mealsFormat.format(dates.get(position));
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(true);
@@ -175,7 +127,6 @@ public class HomeFragment extends Fragment {
                         setUpCalendar();
                     }
                 });
-                return true;
             }
         });
 
@@ -238,7 +189,60 @@ public class HomeFragment extends Fragment {
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selected_recipe_id = "0";
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
+                final View addView = LayoutInflater.from(context).inflate(R.layout.calendar_add_meal,null);
+                Spinner spinner = addView.findViewById(R.id.recipe_spinner);
+                adapter = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,starred_names);
+                populateStarred();
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String selected_recipe = (String) parent.getItemAtPosition(position);
+                        selected_recipe_id = starred_ids.get(starred_names.indexOf(selected_recipe));
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
 
+                    }
+                });
+
+                final EditText notes_et = addView.findViewById(R.id.notes);
+                Button addMealBtn = addView.findViewById(R.id.add_meal_button);
+                final DatePicker datePicker = addView.findViewById(R.id.datePicker);
+                final Calendar today = Calendar.getInstance(Locale.ENGLISH);
+                selected_day = mealsFormat.format(today.getTime());
+                selected_month = monthFormat.format(today.getTime());
+                selected_year = yearFormat.format(today.getTime());
+                datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+                    @Override
+                    public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        Calendar c = Calendar.getInstance();
+                        c.set(year,month,dayOfMonth);
+                        selected_day = mealsFormat.format(c.getTime());
+                        selected_month = monthFormat.format(c.getTime());
+                        selected_year = yearFormat.format(c.getTime());
+                    }
+                });                addMealBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(selected_recipe_id.equals("0")){
+                            Toast.makeText(context,"Please select a recipe",Toast.LENGTH_SHORT).show();
+                        }else{
+                            String notes = notes_et.getText().toString();
+                            saveMealPlan(selected_recipe_id,starred_names.get(starred_ids.indexOf(selected_recipe_id)),selected_day,selected_month,selected_year,notes);
+                            setUpCalendar();
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+
+                builder.setView(addView);
+                alertDialog = builder.create();
+                alertDialog.show();
             }
         });
         return v;
