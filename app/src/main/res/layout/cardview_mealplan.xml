@@ -10,17 +10,35 @@
         android:background="@color/p_orange"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DATE"
-            android:textSize="20sp"
-            android:padding="5dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:id="@+id/mp_date"
-            android:background="@color/p_yellow"
-            />
+            android:orientation="horizontal"
+            android:background="@color/p_yellow">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DATE"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:id="@+id/mp_date"
+                android:layout_weight="1"
+                />
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_delete_black_24dp"
+                android:id="@+id/mp_delete"
+                />
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"

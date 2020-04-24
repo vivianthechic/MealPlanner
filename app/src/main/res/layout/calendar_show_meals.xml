@@ -18,8 +18,7 @@
         android:textSize="28sp"
         android:paddingVertical="20dp"
         android:textAlignment="center"
-        android:alpha=".7"
-        android:visibility="invisible"/>
+        android:alpha=".7"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

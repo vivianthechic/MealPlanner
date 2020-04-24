@@ -2,6 +2,7 @@ package com.example.mealplanner;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -53,7 +54,6 @@ public class HomeFragment extends Fragment {
     private Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
     private Context context;
 
-    private TextView noPlan;
     private RecyclerView showMealsRecycler;
     private List<Date> dates = new ArrayList<>();
     private List<MealPlan> mealplan = new ArrayList<>();
@@ -165,11 +165,16 @@ public class HomeFragment extends Fragment {
                 List<MealPlan> dayPlan = collectMealsPerDay(day);
                 mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),dayPlan);
                 showMealsRecycler.setAdapter(mealRecyclerAdapter);
-                noPlan = showView.findViewById(R.id.noPlan_textview);
 
                 builder.setView(showView);
                 alertDialog = builder.create();
                 alertDialog.show();
+                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        setUpCalendar();
+                    }
+                });
                 return true;
             }
         });
@@ -191,11 +196,16 @@ public class HomeFragment extends Fragment {
                 List<MealPlan> dayPlan = collectMealsPerDay(day);
                 mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),dayPlan);
                 showMealsRecycler.setAdapter(mealRecyclerAdapter);
-                noPlan = showView.findViewById(R.id.noPlan_textview);
 
                 builder.setView(showView);
                 alertDialog = builder.create();
                 alertDialog.show();
+                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        setUpCalendar();
+                    }
+                });
             }
         });
 
@@ -208,14 +218,20 @@ public class HomeFragment extends Fragment {
                 showMealsRecycler = showView.findViewById(R.id.mealplan_recyclerview);
                 showMealsRecycler.setLayoutManager(new LinearLayoutManager(showView.getContext()));
                 showMealsRecycler.setHasFixedSize(true);
+                collectMealsPerMonth(monthFormat.format(calendar.getTime()),yearFormat.format(calendar.getTime()));
                 mealRecyclerAdapter = new MealRecyclerAdapter(showView.getContext(),mealplan);
                 showMealsRecycler.setAdapter(mealRecyclerAdapter);
-                mealRecyclerAdapter.notifyDataSetChanged();
-                noPlan = showView.findViewById(R.id.noPlan_textview);
 
                 builder.setView(showView);
                 alertDialog = builder.create();
                 alertDialog.show();
+                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        setUpCalendar();
+                    }
+                });
+
             }
         });
 
@@ -313,6 +329,9 @@ public class HomeFragment extends Fragment {
                     mealplan.add(mp);
                     Collections.sort(mealplan);
                     gridViewAdapter.notifyDataSetChanged();
+                    if(mealRecyclerAdapter != null){
+                        mealRecyclerAdapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
@@ -326,21 +345,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                if(docs.isEmpty()){
-                    showMealsRecycler.setVisibility(View.INVISIBLE);
-                    noPlan.setVisibility(View.VISIBLE);
-                }else {
-                    for (int i = 0; i < docs.size(); i++) {
-                        DocumentSnapshot doc = docs.get(i);
-                        String id = doc.getString("recipeId");
-                        String name = doc.getString("recipeName");
-                        String month = doc.getString("month");
-                        String year = doc.getString("year");
-                        String notes = doc.getString("notes");
-                        MealPlan mp = new MealPlan(id, name, date, month, year, notes);
-                        list.add(mp);
-                        mealRecyclerAdapter.notifyDataSetChanged();
-                    }
+                for (int i = 0; i < docs.size(); i++) {
+                    DocumentSnapshot doc = docs.get(i);
+                    String id = doc.getString("recipeId");
+                    String name = doc.getString("recipeName");
+                    String month = doc.getString("month");
+                    String year = doc.getString("year");
+                    String notes = doc.getString("notes");
+                    MealPlan mp = new MealPlan(id, name, date, month, year, notes);
+                    list.add(mp);
+                    mealRecyclerAdapter.notifyDataSetChanged();
                 }
             }
         });

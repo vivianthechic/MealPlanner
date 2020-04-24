@@ -4,10 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
@@ -30,11 +38,20 @@ public class MealRecyclerAdapter extends RecyclerView.Adapter<MealRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MealHolder holder, int position) {
-        MealPlan mealPlan = mData.get(position);
+    public void onBindViewHolder(@NonNull MealHolder holder, final int position) {
+        final MealPlan mealPlan = mData.get(position);
         holder.date_text.setText(mealPlan.getMonth()+" "+mealPlan.getDay().substring(mealPlan.getDay().length()-2)+", "+mealPlan.getYear());
         holder.recipe_text.setText(mealPlan.getRecipeName());
         holder.notes_text.setText("Notes: "+mealPlan.getNotes());
+
+        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteMealPlan(mealPlan.getRecipeId(),mealPlan.getNotes(),mealPlan.getDay());
+                mData.remove(position);
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -46,12 +63,33 @@ public class MealRecyclerAdapter extends RecyclerView.Adapter<MealRecyclerAdapte
     public class MealHolder extends RecyclerView.ViewHolder{
 
         TextView date_text, recipe_text, notes_text;
+        ImageButton deleteBtn;
 
         public MealHolder(@NonNull View itemView) {
             super(itemView);
             date_text = itemView.findViewById(R.id.mp_date);
             recipe_text = itemView.findViewById(R.id.mp_recipeName);
             notes_text = itemView.findViewById(R.id.mp_notes);
+            deleteBtn = itemView.findViewById(R.id.mp_delete);
+        }
+    }
+
+    private void deleteMealPlan(String recipeId, String notes, String day){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+            CollectionReference mealPlanCollection = fStore.collection("mealPlans");
+            mealPlanCollection.whereEqualTo("recipeId",recipeId).whereEqualTo("day",day).whereEqualTo("notes",notes)
+                    .whereEqualTo("uid",user.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    queryDocumentSnapshots.getDocuments().get(0).getReference().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                        }
+                    });
+                }
+            });
         }
     }
 }
