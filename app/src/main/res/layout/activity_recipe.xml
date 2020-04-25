@@ -7,27 +7,50 @@
     tools:context=".RecipeActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/recipe_name_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Recipe Name"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="28sp"
-        android:textStyle="bold"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:id="@+id/linear"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
+
+        <TextView
+            android:id="@+id/recipe_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Recipe Name"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/dropDown"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/ic_arrow_drop_down_circle_black_24dp"
+            android:onClick="showPopup"
+            />
+
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/starRecipe_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipe_name_textview"
+        app:layout_constraintTop_toBottomOf="@+id/linear"
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
@@ -71,16 +94,5 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/starRecipe_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Add/remove starred recipes"
-        android:textColor="@color/colorAccent"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
