@@ -3,7 +3,6 @@ package com.example.mealplanner;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +36,6 @@ import java.util.Map;
 
 public class InventoryFragment extends Fragment {
 
-    private ExpandableListView listView;
     private ExpandableListAdapter listAdapter;
     private List<String> headerList, produce, meat, dairy, grain, sauce, other;
     private HashMap<String,List<String>> childMap;
@@ -55,7 +54,7 @@ public class InventoryFragment extends Fragment {
             getActivity().finish();
             startActivity(new Intent(getContext(),Login.class));
         }
-        listView = v.findViewById(R.id.inventory_expandablelist);
+        ExpandableListView listView = v.findViewById(R.id.inventory_expandablelist);
         headerList = Arrays.asList("Produce","Meat","Dairy","Grain","Sauce/Seasoning","Other (Snack, Drink, etc.)");
         childMap = new HashMap<>();
         produce = new ArrayList<>(); meat = new ArrayList<>(); dairy = new ArrayList<>(); grain = new ArrayList<>(); sauce = new ArrayList<>(); other = new ArrayList<>();
@@ -95,7 +94,6 @@ public class InventoryFragment extends Fragment {
                     public void onClick(View v) {
                         String item_name = item_et.getText().toString();
                         saveInventoryItem(item_name,selected_group);
-                        prepareListData();
                         alertDialog.dismiss();
                     }
                 });
@@ -115,17 +113,28 @@ public class InventoryFragment extends Fragment {
         return v;
     }
 
-    private void saveInventoryItem(String item_name, String food_group){
+    private void saveInventoryItem(final String item_name, final String food_group){
         FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-        CollectionReference inventoryCollection = fStore.collection("inventory");
-        Map<String,Object> data = new HashMap<>();
-        data.put("item",item_name);
-        data.put("category",food_group);
-        data.put("onList",false);
-        data.put("uid",user.getUid());
-        inventoryCollection.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        final CollectionReference inventoryCollection = fStore.collection("inventory");
+        inventoryCollection.whereEqualTo("item",item_name).whereEqualTo("category",food_group).whereEqualTo("uid",user.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentReference documentReference) {
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(queryDocumentSnapshots.getDocuments().isEmpty()){
+                    Map<String,Object> data = new HashMap<>();
+                    data.put("item",item_name);
+                    data.put("category",food_group);
+                    data.put("onList",false);
+                    data.put("uid",user.getUid());
+                    inventoryCollection.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(getContext(),"Item added to inventory.",Toast.LENGTH_SHORT).show();
+                            prepareListData();
+                        }
+                    });
+                }else{
+                    Toast.makeText(getContext(),"Item already in inventory.",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

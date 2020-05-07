@@ -14,6 +14,7 @@
         android:layout_weight="1"
         />
     <ImageButton
+        android:id="@+id/add_to_shoplist"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/ic_add_black_24dp"
@@ -23,6 +24,7 @@
         />
 
     <ImageButton
+        android:id="@+id/delete_inv_item"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/ic_delete_black_24dp"

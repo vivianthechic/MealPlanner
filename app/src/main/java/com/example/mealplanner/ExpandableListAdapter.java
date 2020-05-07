@@ -5,7 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.List;
@@ -90,19 +99,68 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        String itemText = (String) getChild(groupPosition,childPosition);
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        final String itemText = (String) getChild(groupPosition,childPosition);
+        final String group = (String) getGroup(groupPosition);
         if(convertView == null){
             LayoutInflater layoutInflater = LayoutInflater.from(mContext);
             convertView = layoutInflater.inflate(R.layout.inventory_list_item,parent,false);
         }
         TextView childText = convertView.findViewById(R.id.expandablelist_item);
         childText.setText(itemText);
+        ImageButton add_to_shop = convertView.findViewById(R.id.add_to_shoplist);
+        ImageButton delete_item = convertView.findViewById(R.id.delete_inv_item);
+        add_to_shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addItemToShoppingList(itemText,group);
+            }
+        });
+        delete_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteFromInventory(itemText,group);
+                mChildData.get(group).remove(childPosition);
+                notifyDataSetChanged();
+            }
+        });
         return convertView;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+        return false;
+    }
+
+    private void addItemToShoppingList(String item, String group){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        fStore.collection("inventory").whereEqualTo("uid",user.getUid()).whereEqualTo("item",item).whereEqualTo("category",group).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                for(int i = 0; i < docs.size();i++){
+                    DocumentSnapshot doc = docs.get(i);
+                    doc.getReference().update("onList",true);
+                    Toast.makeText(mContext,"Item added to shopping list.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void deleteFromInventory(String item, String group){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        fStore.collection("inventory").whereEqualTo("uid",user.getUid()).whereEqualTo("item",item).whereEqualTo("category",group).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                queryDocumentSnapshots.getDocuments().get(0).getReference().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(mContext,"Item deleted from inventory.",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 }
