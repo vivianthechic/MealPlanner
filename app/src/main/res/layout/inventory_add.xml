@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/p_green">
+
+    <EditText
+        android:id="@+id/inventory_item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Item to add..."
+        android:background="@color/white"
+        android:padding="10dp"
+        android:layout_margin="30dp"
+        />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/inventory_group_spinner"
+        android:background="@drawable/spinner"
+        android:textColor="@color/black"
+        android:spinnerMode="dropdown"
+        android:padding="10dp"
+        android:layout_marginHorizontal="30dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingHorizontal="50dp"
+        android:layout_marginVertical="20dp"
+        android:id="@+id/add_inventory_button"
+        android:text="Add to inventory"
+        android:textColor="@color/colorAccent"
+        />
+
+</LinearLayout>

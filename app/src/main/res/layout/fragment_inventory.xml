@@ -15,4 +15,24 @@
         android:dividerHeight="1dp"
         />
 
+    <ImageButton
+        android:id="@+id/add_to_inventory"
+        android:layout_height="70dp"
+        android:layout_width="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="20dp"
+        android:tooltipText="Add to Inventory"
+        android:background="@drawable/ic_add_circle_black_24dp"/>
+
+    <ImageButton
+        android:id="@+id/show_groceries"
+        android:layout_height="60dp"
+        android:layout_width="60dp"
+        app:layout_constraintBottom_toTopOf="@id/add_to_inventory"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="25dp"
+        android:tooltipText="View Shopping List"
+        android:background="@drawable/shop_circle"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

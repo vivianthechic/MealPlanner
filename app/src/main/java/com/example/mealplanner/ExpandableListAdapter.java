@@ -77,6 +77,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView headerText = v.findViewById(R.id.expandablelist_title);
         headerText.setText(title);
 
+        TextView numItems = v.findViewById(R.id.num_items);
+        List<String> list = mChildData.get(mHeaderData.get(groupPosition));
+        if(list == null || list.isEmpty()){
+            numItems.setText("0 items");
+        }else{
+            String x = list.size()+" items";
+            numItems.setText(x);
+        }
+
         return v;
     }
 
