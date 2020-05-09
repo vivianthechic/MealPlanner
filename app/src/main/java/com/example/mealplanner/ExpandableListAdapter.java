@@ -101,7 +101,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String itemText = (String) getChild(groupPosition,childPosition);
-        final String group = (String) getGroup(groupPosition);
+        final String ogGroup = (String) getGroup(groupPosition);
+        String groupTemp = (String) getGroup(groupPosition);
+        if(groupTemp.startsWith("Other")){
+            groupTemp = "Other";
+        }
+        final String group = groupTemp;
         if(convertView == null){
             LayoutInflater layoutInflater = LayoutInflater.from(mContext);
             convertView = layoutInflater.inflate(R.layout.inventory_list_item,parent,false);
@@ -120,7 +125,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 deleteFromInventory(itemText,group);
-                mChildData.get(group).remove(childPosition);
+                mChildData.get(ogGroup).remove(childPosition);
                 notifyDataSetChanged();
             }
         });

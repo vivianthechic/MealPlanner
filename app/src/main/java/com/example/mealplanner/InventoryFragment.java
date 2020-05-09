@@ -63,8 +63,6 @@ public class InventoryFragment extends Fragment {
         listView.setAdapter(listAdapter);
 
         ImageButton addInvBtn = v.findViewById(R.id.add_to_inventory);
-        ImageButton showGList = v.findViewById(R.id.show_groceries);
-
         addInvBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,12 +102,6 @@ public class InventoryFragment extends Fragment {
             }
         });
 
-        showGList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         return v;
     }
 

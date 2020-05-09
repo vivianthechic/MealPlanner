@@ -125,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(new Intent(getApplicationContext(),ChangePassword.class));
     }
 
+    public void showGList(View v){
+        startActivity(new Intent(getApplicationContext(),ShopListActivity.class));
+    }
+
     public void deactivate(View v){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
