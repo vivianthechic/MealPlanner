@@ -41,16 +41,15 @@
 
 
         <TextView
+            android:id="@+id/mp_recipeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recipe"
-            android:textSize="28sp"
+            android:fontFamily="@font/kotta_one"
             android:padding="10dp"
-            android:textStyle="bold"
-            android:fontFamily="cursive"
+            android:text="Recipe"
             android:textColor="@color/colorPrimaryDark"
-            android:id="@+id/mp_recipeName"
-            />
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"

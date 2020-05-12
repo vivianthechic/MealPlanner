@@ -32,6 +32,10 @@
             android:name=".ChangePassword"
             android:theme="@style/AppTheme" />
         <activity android:name=".RecipeActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

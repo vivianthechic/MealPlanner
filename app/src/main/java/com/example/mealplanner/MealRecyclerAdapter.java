@@ -1,6 +1,7 @@
 package com.example.mealplanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -50,6 +53,13 @@ public class MealRecyclerAdapter extends RecyclerView.Adapter<MealRecyclerAdapte
                 deleteMealPlan(mealPlan.getRecipeId(),mealPlan.getNotes(),mealPlan.getDay());
                 mData.remove(position);
                 notifyDataSetChanged();
+            }
+        });
+
+        holder.recipe_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRecipe(mData.get(position).getRecipeId(),mData.get(position).getRecipeName());
             }
         });
     }
@@ -91,5 +101,22 @@ public class MealRecyclerAdapter extends RecyclerView.Adapter<MealRecyclerAdapte
                 }
             });
         }
+    }
+
+    private void showRecipe(final String recipeId, final String recipeName){
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        fStore.collection("recipes").document(recipeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String ing = documentSnapshot.getString("ingredients");
+                String ins = documentSnapshot.getString("instructions");
+                Intent i = new Intent(mContext,RecipeActivity.class);
+                i.putExtra("recipeId",recipeId);
+                i.putExtra("recipeName",recipeName);
+                i.putExtra("ingredients",ing);
+                i.putExtra("instructions",ins);
+                mContext.startActivity(i);
+            }
+        });
     }
 }
